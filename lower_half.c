@@ -1,18 +1,30 @@
 #include <stdio.h>
 
-void foo()
+void (*fn_Arr[2])();
+
+void foo(int i)
 {
 	printf("hello, this is function foo\n");
+	printf("value of int i is: %d\n", i);
 }
 
+void bar(int j, int k)
+{
+	printf("hello, this is function bar\n");
+	printf("value of int j is: %d\n", j);
+	printf("value of int k is: %d\n", k);
+}
 int main()
 {
 	void (*fn_ptr)();	//declaring a pointer for function
 	
 	fn_ptr = &foo;		//storing addr of foo in fn_ptr
-	
+	fn_Arr[0] = &foo;
+	fn_Arr[1] = &bar;		
 	printf("Hello, this is main calling function foo by address...\n");
-	(*fn_ptr)();
+//	(*fn_ptr)(23);
+	(*fn_Arr[0])(23);
+	(*fn_Arr[1])(2, 3);
 
 	return 0;
 
