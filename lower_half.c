@@ -14,13 +14,15 @@ void bar(int j, int k)
 	printf("value of int j is: %d\n", j);
 	printf("value of int k is: %d\n", k);
 }
+
+void (*fn_Arr[2])() __attribute__((section(".custom_section"))) = {&foo, &bar};
 int main()
 {
 	void (*fn_ptr)();	//declaring a pointer for function
 	
 	fn_ptr = &foo;		//storing addr of foo in fn_ptr
-	fn_Arr[0] = &foo;
-	fn_Arr[1] = &bar;		
+//	fn_Arr[0] = &foo;
+//	fn_Arr[1] = &bar;		
 	printf("Hello, this is main calling function foo by address...\n");
 //	(*fn_ptr)(23);
 	(*fn_Arr[0])(23);
