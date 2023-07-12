@@ -12,6 +12,8 @@ Then in the main function rather than calling the array by its name, we have a c
 # Makefile
 for compling the the code, use the following command
 
-(.) make a3	: this command will make 3.c into an executable named 'a3'.
-(.) make clean	: this command will remove all the output executables.
+(.) make 		: this command will compile 'lower-half' and 'upper-half' executeables.
+(.) make clean		: this command will remove all the output executables.
+(.) make check_ls	: this command will test the working of lower-half's capability to  kernel load /bin/ls program
+(.) make check		: this command will test if lower-half is capable of callind a custom program named 'upper-half'
 
