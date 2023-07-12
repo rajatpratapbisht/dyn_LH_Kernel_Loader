@@ -13,7 +13,7 @@ int main()
         (*fn_ptr)(8);
         printf ("\n");
 
-        printf("Hello, this is upper-half calling function foo by address...\n");
+        printf("Hello, this is upper-half calling function bar by address...\n");
         printf("----------------------------------------------------------\n");
         (*(fn_ptr + 1))(2, 8);
         printf("\n");
