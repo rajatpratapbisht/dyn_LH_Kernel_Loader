@@ -65,7 +65,7 @@ int load_mpi_fn(void* handle);
 
 int hello_from_LH()
 {
-	printf("\n########----------------##############\n");
+	printf("\n===========================================================\n");
 	printf("Hello, from the lower-half\n :)\n");
 	return 0;
 }
@@ -118,8 +118,10 @@ int main(int argc, char *argv[], char *envp[]) {
 
 
 
- // load_mpi_fn(MPI_handle);
-  const char* mpi_function_names[4] = {
+  load_mpi_fn(MPI_handle);
+ 
+/*
+ const char* mpi_function_names[4] = {
         "MPI_Init",
         "MPI_Comm_size",
         "MPI_Comm_rank",
@@ -139,7 +141,7 @@ int main(int argc, char *argv[], char *envp[]) {
 // TESTING is the array stored the values or not!
 
   (*fn_Arr[4])();
-
+*/
 
 //------------------------------------------------------------------------------------------------
 
@@ -450,7 +452,7 @@ static void *mmap_wrapper(void *addr, size_t length, int prot, int flags,
   return rc;
 }
 
-/*
+
 int load_mpi_fn(void * handle)
 {
   int i;
@@ -471,9 +473,7 @@ int load_mpi_fn(void * handle)
   }
   fn_Arr[4] =(void*) &hello_from_LH;
 
-// TESTING is the array stored the values or not!
- (*fn_Arr[4])();
 
   return 0;
 }
-*/
+

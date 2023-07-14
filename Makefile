@@ -1,8 +1,8 @@
 FILE=lower-half
 CC=gcc
-CFLAGS=-g3 -fPIC 
+CFLAGS=-g3 -fPIC -O0
 
-all: ${FILE} upper-half
+all: ${FILE} libmpiStub.so upper-half
 
 check: ${FILE} upper-half
 	./${FILE} -a 0x800000 ./upper-half
@@ -24,16 +24,26 @@ copy-stack: copy-stack.c
 patch-trampoline: patch-trampoline.c
 	${CC} ${CFLAGS} -o $@ $<
 
-upper-half: upper-half.c
-	${CC} ${CFLAGS} -o $@ $<
+upper-half: upper-half.c 
+	${CC} ${CFLAGS} -o $@ $< -L. -lmpiStub
+
+libmpiStub.so: mpiStub.o
+	${CC} ${CFLAGS} -shared -o $@ $<
+
+mpiStub.o: mpiStub.c
+	${CC} ${CFLAGS} -c $<
+
 vi vim:
 	vim ${FILE}.c
+
+status: clean
+	git status
 
 dist: clean
 	dir=`basename $$PWD` && cd .. && tar zcvf $$dir.tgz $$dir
 	dir=`basename $$PWD` && ls -l ../$$dir.tgz
 
 clean:
-	rm -f ${FILE} upper-half get-symbol-offset  copy-stack *.o patch-trampoline a.out
+	rm -f ${FILE} upper-half get-symbol-offset  copy-stack *.o patch-trampoline a.out *.so
 
 .PHONY: dist vi vim clean gdb gdb_test
