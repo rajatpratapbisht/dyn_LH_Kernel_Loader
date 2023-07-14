@@ -8,6 +8,8 @@
 #include <sys/mman.h>
 #include <assert.h>
 #include <elf.h>
+#include <dlfcn.h>
+
 
 // Uses ELF Format.  For background, read both of:
 //  * http://www.skyfree.org/linux/references/ELF_Format.pdf
@@ -55,43 +57,19 @@ char *deepCopyStack(int argc, char **argv,
                     Elf64_auxv_t **);
 void patch_trampoline(void *from_addr, void *to_addr);
 
-void (*fn_Arr[2])();
+//array to store addresses of basic MPI functions 
+void (*fn_Arr[5])() __attribute__((section(".custom_section")));
 
-void foo(int i)
+//loads the function addresses int the array declared above
+int load_mpi_fn(void* handle);
+
+int hello_from_LH()
 {
-        printf("hello, this is function foo\n");
-        printf("value of int i is: %d\n", i);
+	printf("\n########----------------##############\n");
+	printf("Hello, from the lower-half\n :)\n");
+	return 0;
 }
 
-void bar(int j, int k)
-{
-        printf("hello, this is function bar\n");
-        printf("value of int j is: %d\n", j);
-        printf("value of int k is: %d\n", k);
-}
-
-void (*fn_Arr[2])() __attribute__((section(".custom_section"))) = {&foo, &bar};
-
-void  my_print()
-{
-        void (**fn_ptr)();      //declaring a pointer for function
-
-        fn_ptr = (void (**)()) 0x5000000;               //storing addr of foo in fn_ptr
-
-        printf("\nHello, this is main calling function foo by address...\n");
-        printf("----------------------------------------------------------\n");
-        (*fn_ptr)(23);
-        printf ("\n");
-
-        printf("Hello, this is main calling function foo by address...\n");
-        printf("----------------------------------------------------------\n");
-        (*(fn_ptr + 1))(2, 3);
-        printf("\n");
-
-        printf("------------------------------------------------------------\n");
-        printf("Launching upper half using kernel loader...\n\n");
-
-}
 
 
 int main(int argc, char *argv[], char *envp[]) {
@@ -125,7 +103,30 @@ int main(int argc, char *argv[], char *envp[]) {
     exit(1);
   }
 
-  my_print();
+//  my_print();
+
+//------------------------------------------------------------------------------------------------
+ void* MPI_handle;
+  MPI_handle = dlopen("libmpi.so", RTLD_LAZY);
+  if(MPI_handle == NULL)
+  {
+    printf("FAILED to load libmpi.so\n");
+    char *error = dlerror();
+    printf("%s\n", error);
+    exit(1);
+  }
+
+
+
+  load_mpi_fn(MPI_handle);
+
+
+//------------------------------------------------------------------------------------------------
+
+
+  printf("Loaded MPI functions in the array...\n\n"); 
+
+//------------------------------------------------------------------------------------------------
 
   cmd_fd = open(cmd_argv[0], O_RDONLY);
   get_elf_interpreter(cmd_fd, &cmd_entry, elf_interpreter, ld_so_addr);
@@ -174,6 +175,7 @@ int main(int argc, char *argv[], char *envp[]) {
   patch_trampoline(interp_base_address + mmap_offset, &mmap_wrapper);
   
 
+  printf("------------------------------------------------------------\n");
   printf("Jumping to target program\n");
   printf("########################################################################\n\n");
 
@@ -422,8 +424,34 @@ char * map_elf_interpreter_load_segment(int fd, Elf64_Phdr phdr,
 
 static void *mmap_wrapper(void *addr, size_t length, int prot, int flags,
                           int fd, off_t offset) {
-  fprintf(stderr, "*** mmap(addr, length, prot, fd): %p, 0x%x, %d, %d\n",
-                  addr, length, prot, fd);
+//  fprintf(stderr, "*** mmap(addr, length, prot, fd): %p, 0x%x, %d, %d\n",
+//                  addr, length, prot, fd);
   void *rc = mmap(addr, length, prot, flags, fd, offset);
   return rc;
+}
+
+int load_mpi_fn(void * handle)
+{
+  int i;
+  const char* mpi_function_names[4] = {
+        "MPI_Init",
+        "MPI_Comm_size",
+        "MPI_Comm_rank",
+        "MPI_Finalize"
+    };
+
+  for (i = 0; i < 4; i++) {
+    fn_Arr[i] = (void*) dlsym(handle, mpi_function_names[i]);
+    if (!fn_Arr[i]) {
+      fprintf(stderr, "Failed to load MPI function '%s': %s\n", mpi_function_names[i], dlerror());
+      dlclose(handle);
+      return 1;
+    }
+  }
+  fn_Arr[4] =(void*) &hello_from_LH;
+
+// TESTING is the array stored the values or not!
+ (*fn_Arr[4])();
+
+  return 0;
 }
