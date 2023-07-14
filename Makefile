@@ -1,6 +1,6 @@
 FILE=lower-half
 CC=gcc
-CFLAGS=-g3 -static  
+CFLAGS=-g3 -fPIC 
 
 all: ${FILE} upper-half
 
@@ -14,11 +14,10 @@ gdb: ${FILE}
 
 # Compile code with kernel-loader to be in high memory, to avoid address conflicts.
 ${FILE}: ${FILE}.c get-symbol-offset.o  copy-stack.o patch-trampoline.o
-	${CC} ${CFLAGS} -Wl,-Ttext-segment=0x1000000,-section-start,.custom_section=0x5000000 -o $@ $^ -ldl
+	${CC} ${CFLAGS} -Wl,-Ttext-segment=0x2000000,-section-start,.custom_section=0x5000000 -o $@ $^ -ldl
 
 get-symbol-offset: get-symbol-offset.c
 	${CC} ${CFLAGS} -o $@ $<
-
 copy-stack: copy-stack.c
 	${CC} ${CFLAGS} -o $@ $<
 

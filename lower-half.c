@@ -118,7 +118,27 @@ int main(int argc, char *argv[], char *envp[]) {
 
 
 
-  load_mpi_fn(MPI_handle);
+ // load_mpi_fn(MPI_handle);
+  const char* mpi_function_names[4] = {
+        "MPI_Init",
+        "MPI_Comm_size",
+        "MPI_Comm_rank",
+        "MPI_Finalize"
+    };
+
+  for (i = 0; i < 4; i++) {
+    fn_Arr[i] = (void*) dlsym(MPI_handle, mpi_function_names[i]);
+    if (!fn_Arr[i]) {
+      fprintf(stderr, "Failed to load MPI function '%s': %s\n", mpi_function_names[i], dlerror());
+      dlclose(MPI_handle);
+      return 1;
+    }
+  }
+  fn_Arr[4] =(void*) &hello_from_LH;
+
+// TESTING is the array stored the values or not!
+
+  (*fn_Arr[4])();
 
 
 //------------------------------------------------------------------------------------------------
@@ -430,6 +450,7 @@ static void *mmap_wrapper(void *addr, size_t length, int prot, int flags,
   return rc;
 }
 
+/*
 int load_mpi_fn(void * handle)
 {
   int i;
@@ -455,3 +476,4 @@ int load_mpi_fn(void * handle)
 
   return 0;
 }
+*/
