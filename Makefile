@@ -10,7 +10,7 @@ check: ${FILE} upper-half
 check_ls:  ${FILE}
 	./${FILE} -a 0x800000 /bin/ls
 gdb: ${FILE}
-	gdb --args ./$< -a 0x800000 /bin/ls
+	gdb --args ./$< -a 0x800000 ./upper-half 
 
 # Compile code with kernel-loader to be in high memory, to avoid address conflicts.
 ${FILE}: ${FILE}.c get-symbol-offset.o  copy-stack.o patch-trampoline.o

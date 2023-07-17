@@ -1,0 +1,5 @@
+# make all
+#run the following command:
+	echo $LD_LIBRARY_PATH
+		if NOTHING
+	do > export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD
