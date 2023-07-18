@@ -1,11 +1,18 @@
 #include <stdio.h>
-
-int main()
+#include </usr/include/openmpi-x86_64/mpi.h>
+int main(int argc, char *argv[])
 {
+#ifdef VERBOSE
 
-        printf("Hello, World!\nThis is Upper Half program :)\n");
+    printf("-----------------------------------------\n");
+    printf("argc: %d, argv[]: %s\n", argc, *argv);
+    printf("-----------------------------------------\n");
 
-	hello_from_LH();
+#endif
+    printf("Hello, World!\nThis is Upper Half program :)\n");
 
+    MPI_Init(&argc, &argv);
+    hello_from_LH();
+    MPI_Finalize();
 	return 0;
 }

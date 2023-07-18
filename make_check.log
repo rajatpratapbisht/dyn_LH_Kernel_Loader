@@ -1,0 +1,41 @@
+-bash-4.2$ make check
+./lower-half -a 0x800000 ./upper-half
+address of MPI_Init in libmpi.so:5099df90
+address of MPI_Comm_size in libmpi.so:50994ae0
+address of MPI_Comm_rank in libmpi.so:50993760
+address of MPI_Finalize in libmpi.so:50996e90
+######################################################################################
+######################################################################################
+Loaded MPI functions in the array...
+
+MPI_handle: 51020000, &MPI_Init: 5099df90
+MPI_handle: 51020000, &MPI_Comm_size: 50994ae0
+MPI_handle: 51020000, &MPI_Comm_rank: 50993760
+MPI_handle: 51020000, &MPI_Finalize: 50996e90
+MPI_handle: 51020000, &hello_fom_LH: 2000f6d
+######################################################################################
+######################################################################################
+Interpreter (ld.so): /lib64/ld-linux-x86-64.so.2
+Address of 'mmap' in memory of ld.so (run-time loader):  0x8197a0
+------------------------------------------------------------
+Jumping to target program
+########################################################################
+
+-----------------------------------------
+argc: 1, argv[]: ./upper-half
+-----------------------------------------
+Hello, World!
+This is Upper Half program :)
+MPI_INIT:	 5099df90
+[login-students:05010] *** Process received signal ***
+[login-students:05010] Signal: Segmentation fault (11)
+[login-students:05010] Signal code: Address not mapped (1)
+[login-students:05010] Failing at address: 0x100000000
+[login-students:05010] [ 0] /lib64/libpthread.so.0(+0xf630)[0x7f8f50729630]
+[login-students:05010] [ 1] /lib64/libc.so.6(+0x16f8c1)[0x7f8f504bb8c1]
+[login-students:05010] [ 2] /usr/lib64/openmpi/lib/libopen-pal.so.13(opal_argv_join+0x3c)[0x7f8f4fe74bfc]
+[login-students:05010] [ 3] /usr/lib64/openmpi/lib/libmpi.so.12(ompi_mpi_init+0x2d8)[0x7f8f5097b598]
+[login-students:05010] [ 4] /usr/lib64/openmpi/lib/libmpi.so.12(MPI_Init+0x193)[0x7f8f5099e123]
+[login-students:05010] [ 5] [0x7f8f4ecb47a4]
+[login-students:05010] *** End of error message ***
+make: *** [check] Segmentation fault

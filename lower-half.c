@@ -9,7 +9,7 @@
 #include <assert.h>
 #include <elf.h>
 #include <dlfcn.h>
-
+#include <mpi.h>
 
 // Uses ELF Format.  For background, read both of:
 //  * http://www.skyfree.org/linux/references/ELF_Format.pdf
@@ -144,9 +144,19 @@ int main(int argc, char *argv[], char *envp[]) {
 */
 
 //------------------------------------------------------------------------------------------------
-
-
+#ifdef VERBOSE
+  printf("######################################################################################\n");
+  printf("######################################################################################\n");
   printf("Loaded MPI functions in the array...\n\n"); 
+  printf("MPI_handle: %x, &MPI_Init: %x\n", MPI_handle, *fn_Arr[0]);
+  printf("MPI_handle: %x, &MPI_Comm_size: %x\n", MPI_handle, *fn_Arr[1]);
+  printf("MPI_handle: %x, &MPI_Comm_rank: %x\n", MPI_handle, *fn_Arr[2]);
+  printf("MPI_handle: %x, &MPI_Finalize: %x\n", MPI_handle, *fn_Arr[3]);
+  printf("MPI_handle: %x, &hello_fom_LH: %x\n", MPI_handle, *fn_Arr[4]);
+  printf("######################################################################################\n");
+  printf("######################################################################################\n");
+
+#endif
 
 //------------------------------------------------------------------------------------------------
 
@@ -463,13 +473,22 @@ int load_mpi_fn(void * handle)
         "MPI_Finalize"
     };
 
-  for (i = 0; i < 4; i++) {
+  for (i = 0; i < 4; i++) 
+  {
     fn_Arr[i] = (void*) dlsym(handle, mpi_function_names[i]);
-    if (!fn_Arr[i]) {
+    if (!fn_Arr[i]) 
+    {
       fprintf(stderr, "Failed to load MPI function '%s': %s\n", mpi_function_names[i], dlerror());
       dlclose(handle);
       return 1;
     }
+#ifdef VERBOSE
+    else
+    {
+	printf("address of %s in libmpi.so:%x\n", mpi_function_names[i], fn_Arr[i]);
+
+    }
+#endif
   }
   fn_Arr[4] =(void*) &hello_from_LH;
 

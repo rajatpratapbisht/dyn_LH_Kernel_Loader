@@ -1,6 +1,7 @@
 FILE=lower-half
 CC=gcc
-CFLAGS=-g3 -fPIC -O0
+CFLAGS=-g3 -fPIC -O0 -DVERBOSE
+MM=mpicc
 
 all: ${FILE} libmpiStub.so upper-half
 
@@ -14,7 +15,7 @@ gdb: ${FILE}
 
 # Compile code with kernel-loader to be in high memory, to avoid address conflicts.
 ${FILE}: ${FILE}.c get-symbol-offset.o  copy-stack.o patch-trampoline.o
-	${CC} ${CFLAGS} -Wl,-Ttext-segment=0x2000000,-section-start,.custom_section=0x5000000 -o $@ $^ -ldl
+	${MM} ${CFLAGS} -Wl,-Ttext-segment=0x2000000,-section-start,.custom_section=0x5000000 -o $@ $^ -ldl
 
 get-symbol-offset: get-symbol-offset.c
 	${CC} ${CFLAGS} -o $@ $<
