@@ -10,6 +10,7 @@
 #include <elf.h>
 #include <dlfcn.h>
 #include <mpi.h>
+#include "mpi-wrapper-lh.h"
 
 // Uses ELF Format.  For background, read both of:
 //  * http://www.skyfree.org/linux/references/ELF_Format.pdf
@@ -61,7 +62,8 @@ void patch_trampoline(void *from_addr, void *to_addr);
 void (*fn_Arr[5])() __attribute__((section(".custom_section")));
 
 //loads the function addresses int the array declared above
-int load_mpi_fn(void* handle);
+//int load_mpi_fn(void* handle);
+int load_mpi_fn();
 
 int hello_from_LH()
 {
@@ -69,7 +71,6 @@ int hello_from_LH()
 	printf("Hello, from the lower-half\n :)\n");
 	return 0;
 }
-
 
 
 int main(int argc, char *argv[], char *envp[]) {
@@ -103,10 +104,14 @@ int main(int argc, char *argv[], char *envp[]) {
     exit(1);
   }
 
-//  my_print();
+//  inti_MPI();
+// MPI_Init(&argc, &argv);
+//	 MPI_Finalize();
+
 
 //------------------------------------------------------------------------------------------------
- void* MPI_handle;
+/*
+ *void* MPI_handle;
   MPI_handle = dlopen("libmpi.so", RTLD_LAZY);
   if(MPI_handle == NULL)
   {
@@ -119,40 +124,27 @@ int main(int argc, char *argv[], char *envp[]) {
 
 
   load_mpi_fn(MPI_handle);
- 
-/*
- const char* mpi_function_names[4] = {
-        "MPI_Init",
-        "MPI_Comm_size",
-        "MPI_Comm_rank",
-        "MPI_Finalize"
-    };
-
-  for (i = 0; i < 4; i++) {
-    fn_Arr[i] = (void*) dlsym(MPI_handle, mpi_function_names[i]);
-    if (!fn_Arr[i]) {
-      fprintf(stderr, "Failed to load MPI function '%s': %s\n", mpi_function_names[i], dlerror());
-      dlclose(MPI_handle);
-      return 1;
-    }
-  }
-  fn_Arr[4] =(void*) &hello_from_LH;
-
-// TESTING is the array stored the values or not!
-
-  (*fn_Arr[4])();
 */
+load_mpi_fn(); 
 
 //------------------------------------------------------------------------------------------------
 #ifdef VERBOSE
   printf("######################################################################################\n");
   printf("######################################################################################\n");
   printf("Loaded MPI functions in the array...\n\n"); 
+/*
+ *
   printf("MPI_handle: %x, &MPI_Init: %x\n", MPI_handle, *fn_Arr[0]);
   printf("MPI_handle: %x, &MPI_Comm_size: %x\n", MPI_handle, *fn_Arr[1]);
   printf("MPI_handle: %x, &MPI_Comm_rank: %x\n", MPI_handle, *fn_Arr[2]);
   printf("MPI_handle: %x, &MPI_Finalize: %x\n", MPI_handle, *fn_Arr[3]);
   printf("MPI_handle: %x, &hello_fom_LH: %x\n", MPI_handle, *fn_Arr[4]);
+ */
+  printf("&MPI_Init: %x\n", *fn_Arr[0]);
+  printf("&MPI_Comm_size: %x\n", *fn_Arr[1]);
+  printf("&MPI_Comm_rank: %x\n", *fn_Arr[2]);
+  printf("&MPI_Finalize: %x\n", *fn_Arr[3]);
+  printf("&hello_fom_LH: %x\n", *fn_Arr[4]);
   printf("######################################################################################\n");
   printf("######################################################################################\n");
 
@@ -206,6 +198,8 @@ int main(int argc, char *argv[], char *envp[]) {
 
   patch_trampoline(interp_base_address + mmap_offset, &mmap_wrapper);
   
+// TODO: Insert a infinite loop to check for proc mappings in gdb.
+//while(1);
 
   printf("------------------------------------------------------------\n");
   printf("Jumping to target program\n");
@@ -463,8 +457,10 @@ static void *mmap_wrapper(void *addr, size_t length, int prot, int flags,
 }
 
 
-int load_mpi_fn(void * handle)
+//int load_mpi_fn(void * handle)
+int load_mpi_fn()
 {
+/*
   int i;
   const char* mpi_function_names[4] = {
         "MPI_Init",
@@ -490,7 +486,14 @@ int load_mpi_fn(void * handle)
     }
 #endif
   }
+*/
+  
+  fn_Arr[0] =(void*) &mpi_init;
+  fn_Arr[1] =(void*) &mpi_comm_size;
+  fn_Arr[2] =(void*) &mpi_comm_rank;
+  fn_Arr[3] =(void*) &mpi_finalize;
   fn_Arr[4] =(void*) &hello_from_LH;
+
 
 
   return 0;

@@ -1,9 +1,13 @@
 FILE=lower-half
 CC=gcc
-CFLAGS=-g3 -fPIC -O0 -DVERBOSE
-MM=mpicc
 
-all: ${FILE} libmpiStub.so upper-half
+#CFLAGS=-g3 -fPIC -O0 -DVERBOSE
+CFLAGS=-g3 -fPIC -O0
+
+MM=mpicc
+IFLAG=/usr/include/openmpi-x86_64/
+
+all: libmpiWrapperLH.so libmpiStub.so ${FILE}  upper-half
 
 check: ${FILE} upper-half
 	./${FILE} -a 0x800000 ./upper-half
@@ -14,8 +18,8 @@ gdb: ${FILE}
 	gdb --args ./$< -a 0x800000 ./upper-half 
 
 # Compile code with kernel-loader to be in high memory, to avoid address conflicts.
-${FILE}: ${FILE}.c get-symbol-offset.o  copy-stack.o patch-trampoline.o
-	${MM} ${CFLAGS} -Wl,-Ttext-segment=0x2000000,-section-start,.custom_section=0x5000000 -o $@ $^ -ldl
+${FILE}: ${FILE}.c get-symbol-offset.o  copy-stack.o patch-trampoline.o 
+	${MM} ${CFLAGS} -Wl,-Ttext-segment=0x2000000,-section-start,.custom_section=0x5000000 -o $@ $^ -ldl -L. -lmpiWrapperLH
 
 get-symbol-offset: get-symbol-offset.c
 	${CC} ${CFLAGS} -o $@ $<
@@ -33,6 +37,13 @@ libmpiStub.so: mpiStub.o
 
 mpiStub.o: mpiStub.c
 	${CC} ${CFLAGS} -c $<
+
+libmpiWrapperLH.so: mpiWrapperLH.o
+	${CC} ${CFLAGS} -shared -o $@ $<
+
+mpiWrapperLH.o: mpiWrapperLH.c
+	${CC} ${CFLAGS} -I${IFLAG} -c $<
+
 
 vi vim:
 	vim ${FILE}.c
