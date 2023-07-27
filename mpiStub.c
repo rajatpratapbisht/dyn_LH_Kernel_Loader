@@ -1,39 +1,41 @@
 #include <stdio.h>
+#include "mpi.h"
 
-
-/*
-#include <mpi.h>
-
+//enumns
 
 #ifdef MPI_COMM_WORLD
-#undef MPI_COMM_WORLD
+# undef MPI_COMM_WORLD
 #endif
+//extern MPI_Comm MPI_COMM_WORLD;
 
-#define MPI_COMM_WORLD COMM
+// Allocate storage in this file only; Others see the extern type decl.
+MPI_Comm MPI_COMM_WORLD;
 
-MPI_Comm *COMM;
-*/
+
+// #define MPI_COMM_WORLD (void (**)()) 0x5000000 
+
 
 
 int MPI_Init(int* argc, char*** argv)
 {
 
-    void (**fn_ptr)();
-    fn_ptr = (void (**)()) 0x5000000;
+    int (**fn_ptr)();
+    fn_ptr = (int (**)()) 0x5000000;
 
 #ifdef VERBOSE
     printf("&MPI_INIT:\t %x\n", *fn_ptr);
 #endif
 
-    (*(fn_ptr))(&argc, &argv);
+  (*(fn_ptr))(&argc, &argv);
+  MPI_COMM_WORLD = (MPI_Comm*) (*(fn_ptr + 5))();
+
 /*
 // populate the address of MPI_COMM_WORLD
-    (*(fn_ptr + 5))(COMM);
 
 */
 }
 
-int MPI_Comm_size(void* comm, int* size)
+OMPI_DECLSPEC int MPI_Comm_size(MPI_Comm comm, int* size)
 {
     void (**fn_ptr)();
     fn_ptr = (void (**)()) 0x5000000;
@@ -47,7 +49,7 @@ int MPI_Comm_size(void* comm, int* size)
 
 }
 
-int MPI_Comm_rank(void* comm, int* rank)
+OMPI_DECLSPEC int MPI_Comm_rank(MPI_Comm comm, int* rank)
 {
     void (**fn_ptr)();
     fn_ptr = (void (**)()) 0x5000000;

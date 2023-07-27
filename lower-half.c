@@ -59,7 +59,7 @@ char *deepCopyStack(int argc, char **argv,
 void patch_trampoline(void *from_addr, void *to_addr);
 
 //array to store addresses of basic MPI functions 
-void (*fn_Arr[6])() __attribute__((section(".custom_section")));
+int (*fn_Arr[6])() __attribute__((section(".custom_section")));
 
 //loads the function addresses int the array declared above
 //int load_mpi_fn(void* handle);
@@ -72,13 +72,12 @@ int hello_from_LH()
 	return 0;
 }
 
-/*
-void Return_MPI_COMM_WORLD(void **Comm)
+
+MPI_Comm Return_MPI_COMM_WORLD()
 {
- 
- *Comm = (void *) &MPI_COMM_WORLD; 
+  return MPI_COMM_WORLD;
 }
-*/
+
 
  
 int main(int argc, char *argv[], char *envp[]) {
@@ -112,27 +111,8 @@ int main(int argc, char *argv[], char *envp[]) {
     exit(1);
   }
 
-//  inti_MPI();
-// MPI_Init(&argc, &argv);
-//	 MPI_Finalize();
-
-
 //------------------------------------------------------------------------------------------------
-/*
- *void* MPI_handle;
-  MPI_handle = dlopen("libmpi.so", RTLD_LAZY);
-  if(MPI_handle == NULL)
-  {
-    printf("FAILED to load libmpi.so\n");
-    char *error = dlerror();
-    printf("%s\n", error);
-    exit(1);
-  }
-
-
-
-  load_mpi_fn(MPI_handle);
-*/
+//------------------------------------------------------------------------------------------------
 load_mpi_fn(); 
 
 //------------------------------------------------------------------------------------------------
@@ -140,20 +120,13 @@ load_mpi_fn();
   printf("######################################################################################\n");
   printf("######################################################################################\n");
   printf("Loaded MPI functions in the array...\n\n"); 
-/*
- *
-  printf("MPI_handle: %x, &MPI_Init: %x\n", MPI_handle, *fn_Arr[0]);
-  printf("MPI_handle: %x, &MPI_Comm_size: %x\n", MPI_handle, *fn_Arr[1]);
-  printf("MPI_handle: %x, &MPI_Comm_rank: %x\n", MPI_handle, *fn_Arr[2]);
-  printf("MPI_handle: %x, &MPI_Finalize: %x\n", MPI_handle, *fn_Arr[3]);
-  printf("MPI_handle: %x, &hello_fom_LH: %x\n", MPI_handle, *fn_Arr[4]);
- */
+  
   printf("&MPI_Init: %x\n", *fn_Arr[0]);
   printf("&MPI_Comm_size: %x\n", *fn_Arr[1]);
   printf("&MPI_Comm_rank: %x\n", *fn_Arr[2]);
   printf("&MPI_Finalize: %x\n", *fn_Arr[3]);
   printf("&hello_fom_LH: %x\n", *fn_Arr[4]);
-  printf("&MPI_COMM_WORLD: %x\n", &MPI_COMM_WORLD);
+  printf("&MPI_COMM_WORLD: %x\n",*fn_Arr[5]);
 
   printf("######################################################################################\n");
   printf("######################################################################################\n");
@@ -470,40 +443,14 @@ static void *mmap_wrapper(void *addr, size_t length, int prot, int flags,
 //int load_mpi_fn(void * handle)
 int load_mpi_fn()
 {
-/*
-  int i;
-  const char* mpi_function_names[4] = {
-        "MPI_Init",
-        "MPI_Comm_size",
-        "MPI_Comm_rank",
-        "MPI_Finalize"
-    };
-
-  for (i = 0; i < 4; i++) 
-  {
-    fn_Arr[i] = (void*) dlsym(handle, mpi_function_names[i]);
-    if (!fn_Arr[i]) 
-    {
-      fprintf(stderr, "Failed to load MPI function '%s': %s\n", mpi_function_names[i], dlerror());
-      dlclose(handle);
-      return 1;
-    }
-#ifdef VERBOSE
-    else
-    {
-	printf("address of %s in libmpi.so:%x\n", mpi_function_names[i], fn_Arr[i]);
-
-    }
-#endif
-  }
-*/
   
-  fn_Arr[0] =(void*) &mpi_init;
-  fn_Arr[1] =(void*) &mpi_comm_size;
-  fn_Arr[2] =(void*) &mpi_comm_rank;
-  fn_Arr[3] =(void*) &mpi_finalize;
-  fn_Arr[4] =(void*) &hello_from_LH;
- // fn_Arr[5] = (void*) &Return_MPI_COMM_WORLD;
+  fn_Arr[0] =(int*) &mpi_init;
+  fn_Arr[1] =(int*) &mpi_comm_size;
+  fn_Arr[2] =(int*) &mpi_comm_rank;
+  fn_Arr[3] =(int*) &mpi_finalize;
+  fn_Arr[4] =(int*) &hello_from_LH;
+
+  fn_Arr[5] = (int*) &Return_MPI_COMM_WORLD;
 
 
   return 0;

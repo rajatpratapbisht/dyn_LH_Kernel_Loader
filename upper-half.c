@@ -1,5 +1,12 @@
 #include <stdio.h>
 #include </usr/include/openmpi-x86_64/mpi.h>
+
+#ifdef MPI_COMM_WORLD
+# undef MPI_COMM_WORLD
+#endif
+extern MPI_Comm MPI_COMM_WORLD;
+
+
 int main(int argc, char *argv[])
 {
 #ifdef VERBOSE
@@ -14,10 +21,10 @@ int main(int argc, char *argv[])
     int size;
 
     MPI_Init(&argc, &argv);
-/*
+
     MPI_Comm_size(MPI_COMM_WORLD, &size);
     printf("Size: %d\n", size);
-*/
+
     hello_from_LH();
     MPI_Finalize();
 	return 0;
