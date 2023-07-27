@@ -59,7 +59,7 @@ char *deepCopyStack(int argc, char **argv,
 void patch_trampoline(void *from_addr, void *to_addr);
 
 //array to store addresses of basic MPI functions 
-void (*fn_Arr[5])() __attribute__((section(".custom_section")));
+void (*fn_Arr[6])() __attribute__((section(".custom_section")));
 
 //loads the function addresses int the array declared above
 //int load_mpi_fn(void* handle);
@@ -72,7 +72,15 @@ int hello_from_LH()
 	return 0;
 }
 
+/*
+void Return_MPI_COMM_WORLD(void **Comm)
+{
+ 
+ *Comm = (void *) &MPI_COMM_WORLD; 
+}
+*/
 
+ 
 int main(int argc, char *argv[], char *envp[]) {
   int i;
   int cmd_argc = 0;
@@ -145,6 +153,8 @@ load_mpi_fn();
   printf("&MPI_Comm_rank: %x\n", *fn_Arr[2]);
   printf("&MPI_Finalize: %x\n", *fn_Arr[3]);
   printf("&hello_fom_LH: %x\n", *fn_Arr[4]);
+  printf("&MPI_COMM_WORLD: %x\n", &MPI_COMM_WORLD);
+
   printf("######################################################################################\n");
   printf("######################################################################################\n");
 
@@ -493,7 +503,7 @@ int load_mpi_fn()
   fn_Arr[2] =(void*) &mpi_comm_rank;
   fn_Arr[3] =(void*) &mpi_finalize;
   fn_Arr[4] =(void*) &hello_from_LH;
-
+ // fn_Arr[5] = (void*) &Return_MPI_COMM_WORLD;
 
 
   return 0;

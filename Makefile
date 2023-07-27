@@ -14,8 +14,13 @@ check: ${FILE} upper-half
 
 check_ls:  ${FILE}
 	./${FILE} -a 0x800000 /bin/ls
+
 gdb: ${FILE}
 	gdb --args ./$< -a 0x800000 ./upper-half 
+
+check_mpi: ${FILE} upper-half
+	mpirun -np 4 ./${FILE} -a 0x800000 ./upper-half
+
 
 # Compile code with kernel-loader to be in high memory, to avoid address conflicts.
 ${FILE}: ${FILE}.c get-symbol-offset.o  copy-stack.o patch-trampoline.o 
@@ -36,7 +41,7 @@ libmpiStub.so: mpiStub.o
 	${CC} ${CFLAGS} -shared -o $@ $<
 
 mpiStub.o: mpiStub.c
-	${CC} ${CFLAGS} -c $<
+	${CC} ${CFLAGS} -I${IFLAG} -c $<
 
 libmpiWrapperLH.so: mpiWrapperLH.o
 	${CC} ${CFLAGS} -shared -o $@ $<

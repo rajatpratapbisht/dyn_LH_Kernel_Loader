@@ -1,5 +1,20 @@
 #include <stdio.h>
 
+
+/*
+#include <mpi.h>
+
+
+#ifdef MPI_COMM_WORLD
+#undef MPI_COMM_WORLD
+#endif
+
+#define MPI_COMM_WORLD COMM
+
+MPI_Comm *COMM;
+*/
+
+
 int MPI_Init(int* argc, char*** argv)
 {
 
@@ -11,7 +26,11 @@ int MPI_Init(int* argc, char*** argv)
 #endif
 
     (*(fn_ptr))(&argc, &argv);
+/*
+// populate the address of MPI_COMM_WORLD
+    (*(fn_ptr + 5))(COMM);
 
+*/
 }
 
 int MPI_Comm_size(void* comm, int* size)

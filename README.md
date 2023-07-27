@@ -18,4 +18,5 @@ for compling the the code, use the following command
 (.) make clean		: this command will remove all the output executables.
 (.) make check_ls	: this command will test the working of lower-half's capability to  kernel load /bin/ls program
 (.) make check		: this command will test if lower-half is capable of callind a custom program named 'upper-half'
+(.) make cehck_mpi	: this command will test if the program is compatible with mpirun command with {-np 4} flag
 
