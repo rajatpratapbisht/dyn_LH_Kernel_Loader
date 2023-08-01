@@ -72,14 +72,25 @@ int hello_from_LH()
 	return 0;
 }
 
-
+/*
 MPI_Comm Return_MPI_COMM_WORLD()
 {
   return MPI_COMM_WORLD;
 }
+*/
 
+//lets check if we can print comm size and rank here
+//
+void Return_MPI_COMM_WORLD()
+{ 
+  int rank, size;
 
- 
+  MPI_Comm_size(MPI_COMM_WORLD, &size);
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
+printf("LOWERHALF: SIZE = %d | RANK = %d\n", size, rank);
+
+} 
 int main(int argc, char *argv[], char *envp[]) {
   int i;
   int cmd_argc = 0;

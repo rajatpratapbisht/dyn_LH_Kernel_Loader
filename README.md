@@ -9,7 +9,7 @@ I have implemented the kernel-loader program (provided to me by Prof. Gene Coope
 	(b) -Wl,-Ttext-segment=0x1000000 		: this will load our text segment of progarm in the provided address to avoid conflict when we load upper-half.
  
 # upper-half
-in the upper-half, I have created a pointer type prototype to call functions defined in the lower half using the well-known address (0x5000000). This implementation can now successfully call the functions stored in the lower-half.  
+In the upper-half, I have created a pointer type prototype to call functions defined in the lower half using the well-known address (0x5000000). This implementation can now successfully call the functions stored in the lower-half.  
 
 # Makefile
 for compling the the code, use the following command
@@ -19,4 +19,12 @@ for compling the the code, use the following command
 (.) make check_ls	: this command will test the working of lower-half's capability to  kernel load /bin/ls program
 (.) make check		: this command will test if lower-half is capable of callind a custom program named 'upper-half'
 (.) make cehck_mpi	: this command will test if the program is compatible with mpirun command with {-np 4} flag
+
+
+
+
+# DEV-options
+To checkout the Cheat-sheet for common commands and tips-and-tricks used for debugging the project:
+	refer file: ".dev-cheat-sheet.txt"
+
 

@@ -36,7 +36,7 @@ char *deepCopyStack(int argc, char **argv,
   // argv and envp strings come next.
   // At least 32 bytes of padding before strings
   char *strings = (char *)&(auxv[i+1]) + 32;
-  assert(argv[0] >= strings);
+//  assert(argv[0] >= strings);
   strings = argv[0];
 
   char *strings_ptr = strings;

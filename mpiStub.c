@@ -27,11 +27,14 @@ int MPI_Init(int* argc, char*** argv)
 #endif
 
   (*(fn_ptr))(&argc, &argv);
-  MPI_COMM_WORLD = (MPI_Comm*) (*(fn_ptr + 5))();
+  
+  fn_ptr = fn_ptr + 5;
+  (*(fn_ptr))();
 
 /*
 // populate the address of MPI_COMM_WORLD
 
+  MPI_COMM_WORLD = (MPI_Comm*) (*(fn_ptr + 5))();
 */
 }
 

@@ -1,0 +1,70 @@
+
+###########################################################################
+# THIS IS THE CHEAT SHEET OF COMMANDS THAT WILL COME HANDY WHILE DEVELOPING
+###########################################################################
+
+
+###########################################################################
+## LIBRARY PATHS:
+###########################################################################
+(.) MPI library:
+	> module load mpi/openmpi-x86_64 
+(.) Custom Libraries:
+	> echo $LD_LIBRARY_PATH
+		[if NOTHING]: > export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD
+
+
+###########################################################################
+## UPGRADE THE BASH INSTANCE TO SUPPORT LATEST GCC/GDB VERSIONS
+###########################################################################
+(.) > scl enable devtoolset-11 bash 
+
+###########################################################################
+## GDB COMMANDS: (PREQ: run under GDB=> gdb --args [executeable] )
+###########################################################################
+(.) Loading custom CLI commands to our GDB instance:
+	>> source ./gdb-dmtcp-utils
+(.) Switching between Assembly and Source Layouts:
+	>> layout/asm
+	>> layout/src
+(.) Debugging steps:
+	<.> recording the steps:	r
+	<.> show recorded commands:	show commands
+	<.> continue: 			c
+	<.> add breakpoints:		break/b [line-number/symbol/function]
+	<.> disp current stack-frame:	where
+	<.> load-symbol-library <address>
+	<.> change value of variable i:	p i=0
+	<.> next:			next/n
+	<.> next asm-instruction:	nexti/ni
+	<.> step into a function:	step/s
+	<.> step into asm:		stepi/si
+
+###########################################################################
+## For Debugging a Function, say MPI_INIT()
+###########################################################################
+(.) generally a <@@@.h> file is used for DECLARATIONS 
+(.) And "lib-@@.so" is used for DEFINITIONS.
+(.) for a function MPI_Init()_:
+	- cat /proc/self/maps shows there are two symbols named MPI_INIT
+		a) source
+		b) @plc
+	- Either put a breakpoint at MPI_Init
+	- Or, layout/asm -> ni -----> MPI_INIT (takes you through PLT) 
+		{USE 'ni' instead of 'si'}
+
+###########################################################################
+###########################################################################
+
+###########################################################################
+###########################################################################	
+
+###########################################################################
+###########################################################################
+
+###########################################################################
+###########################################################################
+
+###########################################################################
+###########################################################################
+

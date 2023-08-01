@@ -9,6 +9,11 @@ extern MPI_Comm MPI_COMM_WORLD;
 
 int main(int argc, char *argv[])
 {
+
+
+int i = 1;
+while (i);
+
 #ifdef VERBOSE
 
     printf("-----------------------------------------\n");
