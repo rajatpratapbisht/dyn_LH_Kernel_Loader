@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include </usr/include/openmpi-x86_64/mpi.h>
+#include <mpi.h>
 
 #ifdef MPI_COMM_WORLD
 # undef MPI_COMM_WORLD
@@ -10,27 +10,35 @@ extern MPI_Comm MPI_COMM_WORLD;
 int main(int argc, char *argv[])
 {
 
+    int num_procs;
+    int rank;
 
-int i = 1;
-while (i);
+# ifdef BLOCKING
+    int i = 1;
+    while (i);
+# endif
 
-#ifdef VERBOSE
+# ifdef VERBOSE
 
     printf("-----------------------------------------\n");
     printf("argc: %d, argv[]: %s\n", argc, *argv);
     printf("-----------------------------------------\n");
 
-#endif
     printf("Hello, World!\nThis is Upper Half program :)\n");
+# endif
 
-    int size;
 
-    MPI_Init(&argc, &argv);
+	MPI_Init(&argc, &argv);
+        
+        MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
+        MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+	printf("-----------------------------------------\n");
+        printf("%d:Hello (p = %d)\n", rank, num_procs);
+	hello_from_LH();
+        printf("%d:Goodbye\n", rank);
+	printf("-----------------------------------------\n");
 
-    MPI_Comm_size(MPI_COMM_WORLD, &size);
-    printf("Size: %d\n", size);
+        MPI_Finalize();
 
-    hello_from_LH();
-    MPI_Finalize();
-	return 0;
+return 0;
 }

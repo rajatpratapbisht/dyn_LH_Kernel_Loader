@@ -65,32 +65,23 @@ int (*fn_Arr[6])() __attribute__((section(".custom_section")));
 //int load_mpi_fn(void* handle);
 int load_mpi_fn();
 
+// Print a hello from lower half
 int hello_from_LH()
 {
-	printf("\n===========================================================\n");
-	printf("Hello, from the lower-half\n :)\n");
+	printf("Hello, from the lower-half\t :)\n");
 	return 0;
 }
 
-/*
+
+// Return Communicator MPI_COMM_WORLD
 MPI_Comm Return_MPI_COMM_WORLD()
-{
-  return MPI_COMM_WORLD;
-}
-*/
-
-//lets check if we can print comm size and rank here
-//
-void Return_MPI_COMM_WORLD()
 { 
-  int rank, size;
-
-  MPI_Comm_size(MPI_COMM_WORLD, &size);
-  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-
-printf("LOWERHALF: SIZE = %d | RANK = %d\n", size, rank);
-
+  return MPI_COMM_WORLD;
 } 
+
+
+
+
 int main(int argc, char *argv[], char *envp[]) {
   int i;
   int cmd_argc = 0;
@@ -455,13 +446,13 @@ static void *mmap_wrapper(void *addr, size_t length, int prot, int flags,
 int load_mpi_fn()
 {
   
-  fn_Arr[0] =(int*) &mpi_init;
-  fn_Arr[1] =(int*) &mpi_comm_size;
-  fn_Arr[2] =(int*) &mpi_comm_rank;
-  fn_Arr[3] =(int*) &mpi_finalize;
-  fn_Arr[4] =(int*) &hello_from_LH;
+  fn_Arr[0] =(int(*)()) &mpi_init;
+  fn_Arr[1] =(int(*)()) &mpi_comm_size;
+  fn_Arr[2] =(int(*)()) &mpi_comm_rank;
+  fn_Arr[3] =(int(*)()) &mpi_finalize;
+  fn_Arr[4] =(int(*)()) &hello_from_LH;
 
-  fn_Arr[5] = (int*) &Return_MPI_COMM_WORLD;
+  fn_Arr[5] = (int(*)()) &Return_MPI_COMM_WORLD;
 
 
   return 0;

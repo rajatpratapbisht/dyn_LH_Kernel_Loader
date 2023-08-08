@@ -2,7 +2,8 @@ FILE=lower-half
 CC=gcc
 
 #CFLAGS=-g3 -fPIC -O0 -DVERBOSE
-CFLAGS=-g3 -fPIC -O0
+ #CFLAGS=-g3 -fPIC -O0 -DBLOCKING
+ CFLAGS=-g3 -fPIC -O0
 
 MM=mpicc
 IFLAG=/usr/include/openmpi-x86_64/
@@ -35,7 +36,7 @@ patch-trampoline: patch-trampoline.c
 	${CC} ${CFLAGS} -o $@ $<
 
 upper-half: upper-half.c 
-	${CC} ${CFLAGS} -o $@ $< -L. -lmpiStub
+	${CC} ${CFLAGS} -I${IFLAG} -o $@ $< -L. -lmpiStub
 
 libmpiStub.so: mpiStub.o
 	${CC} ${CFLAGS} -shared -o $@ $<
@@ -47,7 +48,7 @@ libmpiWrapperLH.so: mpiWrapperLH.o
 	${CC} ${CFLAGS} -shared -o $@ $<
 
 mpiWrapperLH.o: mpiWrapperLH.c
-	${CC} ${CFLAGS} -I${IFLAG} -c $<
+	${CC} ${CFLAGS} -I${IFLAG} -c $<  -lmpi
 
 
 vi vim:

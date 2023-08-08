@@ -15,7 +15,7 @@ MPI_Comm MPI_COMM_WORLD;
 // #define MPI_COMM_WORLD (void (**)()) 0x5000000 
 
 
-
+//####################################################################################
 int MPI_Init(int* argc, char*** argv)
 {
 
@@ -27,18 +27,17 @@ int MPI_Init(int* argc, char*** argv)
 #endif
 
   (*(fn_ptr))(&argc, &argv);
+
   
-  fn_ptr = fn_ptr + 5;
-  (*(fn_ptr))();
-
-/*
 // populate the address of MPI_COMM_WORLD
+  fn_ptr = fn_ptr + 5;
+  MPI_COMM_WORLD = (MPI_Comm)(*(fn_ptr))();
 
-  MPI_COMM_WORLD = (MPI_Comm*) (*(fn_ptr + 5))();
-*/
+
 }
 
-OMPI_DECLSPEC int MPI_Comm_size(MPI_Comm comm, int* size)
+//####################################################################################
+int MPI_Comm_size(MPI_Comm comm, int *size)
 {
     void (**fn_ptr)();
     fn_ptr = (void (**)()) 0x5000000;
@@ -48,11 +47,12 @@ OMPI_DECLSPEC int MPI_Comm_size(MPI_Comm comm, int* size)
     printf("&MPI_Comm_size:\t %x\n", *fn_ptr);
 #endif
 
-//    (*(fn_ptr))(&comm, &size);
+    (*(fn_ptr))(comm, &size);
 
 }
 
-OMPI_DECLSPEC int MPI_Comm_rank(MPI_Comm comm, int* rank)
+//####################################################################################
+int MPI_Comm_rank(MPI_Comm comm, int* rank)
 {
     void (**fn_ptr)();
     fn_ptr = (void (**)()) 0x5000000;
@@ -62,9 +62,12 @@ OMPI_DECLSPEC int MPI_Comm_rank(MPI_Comm comm, int* rank)
     printf("&MPI_Comm_rank:\t %x\n", *fn_ptr);
 #endif
 
-//    (*(fn_ptr))(&comm, &rank);
+    (*(fn_ptr))(comm, &rank);
 
 }
+
+
+//####################################################################################
 int MPI_Finalize()
 {
 
@@ -79,7 +82,9 @@ int MPI_Finalize()
     (*(fn_ptr))();
 
 }
-int hello_from_LH()
+
+//####################################################################################
+void  hello_from_LH()
 {
 
     void (**fn_ptr)();
