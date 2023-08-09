@@ -21,7 +21,6 @@ int mpi_comm_size(MPI_Comm comm, int **size)
 # endif
 
     MPI_Comm_size(MPI_COMM_WORLD, *size);
-    
     return 0;
 }
 

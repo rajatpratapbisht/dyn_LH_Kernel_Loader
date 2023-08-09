@@ -1,7 +1,16 @@
 #include <stdio.h>
 #include "mpi.h"
 
-//enumns
+#define FUNC_ARR_ADDR 0x5000000
+
+enum MPI{
+	INIT, 		// 0
+	COMM_SIZE,	// 1
+	COMM_RANK,	// 2
+	FINALIZE,	// 3
+	HELLO_LH,	// 4
+	COMM_WORLD	// 5
+};
 
 #ifdef MPI_COMM_WORLD
 # undef MPI_COMM_WORLD
@@ -20,7 +29,7 @@ int MPI_Init(int* argc, char*** argv)
 {
 
     int (**fn_ptr)();
-    fn_ptr = (int (**)()) 0x5000000;
+    fn_ptr = (int (**)()) FUNC_ARR_ADDR;
 
 #ifdef VERBOSE
     printf("&MPI_INIT:\t %x\n", *fn_ptr);
@@ -30,8 +39,8 @@ int MPI_Init(int* argc, char*** argv)
 
   
 // populate the address of MPI_COMM_WORLD
-  fn_ptr = fn_ptr + 5;
-  MPI_COMM_WORLD = (MPI_Comm)(*(fn_ptr))();
+  fn_ptr = fn_ptr + COMM_WORLD;
+ MPI_COMM_WORLD = (MPI_Comm)(*(fn_ptr))();
 
 
 }
@@ -40,8 +49,9 @@ int MPI_Init(int* argc, char*** argv)
 int MPI_Comm_size(MPI_Comm comm, int *size)
 {
     void (**fn_ptr)();
-    fn_ptr = (void (**)()) 0x5000000;
-    fn_ptr = fn_ptr + 1;
+    fn_ptr = (void (**)()) FUNC_ARR_ADDR;
+//    fn_ptr = fn_ptr + 1;
+    fn_ptr = fn_ptr + COMM_SIZE;
 
 #ifdef VERBOSE
     printf("&MPI_Comm_size:\t %x\n", *fn_ptr);
@@ -55,8 +65,8 @@ int MPI_Comm_size(MPI_Comm comm, int *size)
 int MPI_Comm_rank(MPI_Comm comm, int* rank)
 {
     void (**fn_ptr)();
-    fn_ptr = (void (**)()) 0x5000000;
-    fn_ptr = fn_ptr + 2;
+    fn_ptr = (void (**)()) FUNC_ARR_ADDR;
+    fn_ptr = fn_ptr + COMM_RANK;
 
 #ifdef VERBOSE
     printf("&MPI_Comm_rank:\t %x\n", *fn_ptr);
@@ -72,8 +82,8 @@ int MPI_Finalize()
 {
 
     void (**fn_ptr)();
-    fn_ptr = (void (**)()) 0x5000000;
-    fn_ptr = fn_ptr + 3;
+    fn_ptr = (void (**)()) FUNC_ARR_ADDR;
+    fn_ptr = fn_ptr + FINALIZE;
 
 #ifdef VERBOSE
     printf("&MPI_Finalize:\t %x\n", *fn_ptr);
@@ -88,8 +98,8 @@ void  hello_from_LH()
 {
 
     void (**fn_ptr)();
-    fn_ptr = (void (**)()) 0x5000000;
-    fn_ptr = fn_ptr + 4;
+    fn_ptr = (void (**)()) FUNC_ARR_ADDR;
+    fn_ptr = fn_ptr + HELLO_LH;
 
 #ifdef VERBOSE
     printf("&hello_from_LH:\t %x\n", *fn_ptr);
