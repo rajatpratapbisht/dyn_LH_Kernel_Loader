@@ -59,7 +59,7 @@ char *deepCopyStack(int argc, char **argv,
 void patch_trampoline(void *from_addr, void *to_addr);
 
 //array to store addresses of basic MPI functions 
-int (*fn_Arr[6])() __attribute__((section(".custom_section")));
+void (*fn_Arr[6])() __attribute__((section(".custom_section")));
 
 //loads the function addresses int the array declared above
 //int load_mpi_fn(void* handle);
@@ -74,9 +74,11 @@ int hello_from_LH()
 
 
 // Return Communicator MPI_COMM_WORLD
-MPI_Comm Return_MPI_COMM_WORLD()
+MPI_Comm* Return_MPI_COMM_WORLD()
 { 
-  return MPI_COMM_WORLD;
+  MPI_Comm *comm = MPI_COMM_WORLD;
+
+  return comm;
 } 
 
 
@@ -88,11 +90,15 @@ int main(int argc, char *argv[], char *envp[]) {
   char **cmd_argv;
   int cmd_fd;
   int ld_so_fd;
-  void * ld_so_addr = NULL;
+
+//  void * ld_so_addr = NULL;
+  void * ld_so_addr = (void*) 0x800000;
+  
   Elf64_Ehdr ld_so_elf_hdr;
   Elf64_Addr cmd_entry;
   void *ld_so_entry;
   char elf_interpreter[MAX_ELF_INTERP_SZ];
+
 
   for (i = 1; i < argc; i++) {
     if (strcmp(argv[i], "-h") == 0) {
@@ -107,11 +113,18 @@ int main(int argc, char *argv[], char *envp[]) {
       cmd_argv = argv + i;
     }
   }
+/*
   if (cmd_argc == 0) {
     fprintf(stderr, "USAGE:  %s [-a load_address] <command_line>\n", argv[0]);
     fprintf(stderr, "  (load_address is typically a multiple of 0x200000)\n");
     exit(1);
   }
+*/
+  
+# ifdef VERBOSE
+  printf("argc = %d \t\t argv = %s\n", argc, *argv);
+  printf("cmd_argc = %d \t\t cmd_argv = %s\n", cmd_argc, *cmd_argv);
+# endif
 
 //------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------
@@ -123,12 +136,13 @@ load_mpi_fn();
   printf("######################################################################################\n");
   printf("Loaded MPI functions in the array...\n\n"); 
   
-  printf("&MPI_Init: %x\n", *fn_Arr[0]);
-  printf("&MPI_Comm_size: %x\n", *fn_Arr[1]);
-  printf("&MPI_Comm_rank: %x\n", *fn_Arr[2]);
-  printf("&MPI_Finalize: %x\n", *fn_Arr[3]);
-  printf("&hello_fom_LH: %x\n", *fn_Arr[4]);
-  printf("&MPI_COMM_WORLD: %x\n",*fn_Arr[5]);
+  printf("&MPI_Init: %p\n", *fn_Arr[0]);
+  printf("&MPI_Comm_size: %p\n", *fn_Arr[1]);
+  printf("&MPI_Comm_rank: %p\n", *fn_Arr[2]);
+  printf("&MPI_Finalize: %p\n", *fn_Arr[3]);
+  printf("&hello_fom_LH: %p\n", *fn_Arr[4]);
+  MPI_Comm *comm = MPI_COMM_WORLD;
+  printf("&MPI_COMM_WORLD: %p\n",comm);
 
   printf("######################################################################################\n");
   printf("######################################################################################\n");
@@ -446,13 +460,13 @@ static void *mmap_wrapper(void *addr, size_t length, int prot, int flags,
 int load_mpi_fn()
 {
   
-  fn_Arr[0] =(int(*)()) &mpi_init;
-  fn_Arr[1] =(int(*)()) &mpi_comm_size;
-  fn_Arr[2] =(int(*)()) &mpi_comm_rank;
-  fn_Arr[3] =(int(*)()) &mpi_finalize;
-  fn_Arr[4] =(int(*)()) &hello_from_LH;
+  fn_Arr[0] =(void(*)()) &mpi_init;
+  fn_Arr[1] =(void(*)()) &mpi_comm_size;
+  fn_Arr[2] =(void(*)()) &mpi_comm_rank;
+  fn_Arr[3] =(void(*)()) &mpi_finalize;
+  fn_Arr[4] =(void(*)()) &hello_from_LH;
 
-  fn_Arr[5] = (int(*)()) &Return_MPI_COMM_WORLD;
+  fn_Arr[5] = (void(*)()) &Return_MPI_COMM_WORLD;
 
 
   return 0;

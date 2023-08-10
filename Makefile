@@ -1,20 +1,20 @@
 FILE=lower-half
 CC=gcc
 
-#CFLAGS=-g3 -fPIC -O0 -DVERBOSE
+ CFLAGS=-g3 -fPIC -O0 -DVERBOSE
  #CFLAGS=-g3 -fPIC -O0 -DBLOCKING
- CFLAGS=-g3 -fPIC -O0
+ #CFLAGS=-g3 -fPIC -O0
 
 MM=mpicc
 IFLAG=/usr/include/openmpi-x86_64/
 
-all: libmpiWrapperLH.so libmpiStub.so ${FILE}  upper-half
+all: libmpiWrapperLH.so libmpiStub.so ${FILE}  upper-half hello_mpi_v1
 
 check: ${FILE} upper-half
-	./${FILE} -a 0x800000 ./upper-half
+	./${FILE}  ./upper-half
 
 check_ls:  ${FILE}
-	./${FILE} -a 0x800000 /bin/ls
+	./${FILE} -a 0x1000000 /bin/ls
 
 gdb: ${FILE}
 	gdb --args ./$< -a 0x800000 ./upper-half 
@@ -34,6 +34,9 @@ copy-stack: copy-stack.c
 
 patch-trampoline: patch-trampoline.c
 	${CC} ${CFLAGS} -o $@ $<
+
+hello_mpi_v1: hello_mpi_v1.c
+	${MM} ${CFLAGS} -o $@ $<
 
 upper-half: upper-half.c 
 	${CC} ${CFLAGS} -I${IFLAG} -o $@ $< -L. -lmpiStub
@@ -62,6 +65,6 @@ dist: clean
 	dir=`basename $$PWD` && ls -l ../$$dir.tgz
 
 clean:
-	rm -f ${FILE} upper-half get-symbol-offset  copy-stack *.o patch-trampoline a.out *.so
+	rm -f ${FILE} upper-half get-symbol-offset  copy-stack *.o patch-trampoline a.out *.so core.* hello_mpi_v1
 
 .PHONY: dist vi vim clean gdb gdb_test

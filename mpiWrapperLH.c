@@ -10,6 +10,12 @@ int mpi_init(int *argc, char ***argv)
 
     MPI_Init(&argc, &argv);
 
+# ifdef VERBOSE
+    printf("LH:This is MPI_Init..\n");
+    MPI_Comm *comm = MPI_COMM_WORLD;
+    printf("&MPI_COMM_WORLD: %p\n",comm);
+# endif
+
     return 0;    
 }
 

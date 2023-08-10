@@ -52,6 +52,19 @@
 	- Either put a breakpoint at MPI_Init
 	- Or, layout/asm -> ni -----> MPI_INIT (takes you through PLT) 
 		{USE 'ni' instead of 'si'}
+(.) We can also check for the 'dumped core' generated in case of SEGFAULT
+ 	- Check for the current core dump limit on your system
+		> ulimit -a
+	- check for the 'core file size' limit on your stystem
+		recommended: > ulimit -c unlimited
+	- check if this took effect:
+		> ulimit -a  ----> core file size = unlimited
+	- run the function with segfault
+		> ./a.out  ===> Segmentation Fault (core dumped)
+	- ls core.xxxx  (check if the core is present on your current directory
+	- gdb -c core.xxxx
+		.this will give you the frame at which it is failing.
+ 		. continue debugging by loading symbols and going step by step
 
 ###########################################################################
 ###########################################################################

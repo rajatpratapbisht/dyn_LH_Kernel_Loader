@@ -18,7 +18,7 @@ enum MPI{
 //extern MPI_Comm MPI_COMM_WORLD;
 
 // Allocate storage in this file only; Others see the extern type decl.
-MPI_Comm MPI_COMM_WORLD;
+MPI_Comm *MPI_COMM_WORLD;
 
 
 // #define MPI_COMM_WORLD (void (**)()) 0x5000000 
@@ -32,7 +32,7 @@ int MPI_Init(int* argc, char*** argv)
     fn_ptr = (int (**)()) FUNC_ARR_ADDR;
 
 #ifdef VERBOSE
-    printf("&MPI_INIT:\t %x\n", *fn_ptr);
+    printf("UH:&MPI_INIT:\t %p\n", *fn_ptr);
 #endif
 
   (*(fn_ptr))(&argc, &argv);
@@ -40,8 +40,11 @@ int MPI_Init(int* argc, char*** argv)
   
 // populate the address of MPI_COMM_WORLD
   fn_ptr = fn_ptr + COMM_WORLD;
- MPI_COMM_WORLD = (MPI_Comm)(*(fn_ptr))();
+  MPI_COMM_WORLD = (MPI_Comm)(*(fn_ptr))();
 
+#ifdef VERBOSE
+     printf("UH:&MPI_COMM_WORLD:\t %p\n", MPI_COMM_WORLD);
+#endif
 
 }
 
@@ -54,7 +57,7 @@ int MPI_Comm_size(MPI_Comm comm, int *size)
     fn_ptr = fn_ptr + COMM_SIZE;
 
 #ifdef VERBOSE
-    printf("&MPI_Comm_size:\t %x\n", *fn_ptr);
+    printf("UH:&MPI_Comm_size:\t %p\n", *fn_ptr);
 #endif
 
     (*(fn_ptr))(comm, &size);
@@ -69,7 +72,7 @@ int MPI_Comm_rank(MPI_Comm comm, int* rank)
     fn_ptr = fn_ptr + COMM_RANK;
 
 #ifdef VERBOSE
-    printf("&MPI_Comm_rank:\t %x\n", *fn_ptr);
+    printf("UH:&MPI_Comm_rank:\t %p\n", *fn_ptr);
 #endif
 
     (*(fn_ptr))(comm, &rank);
@@ -86,7 +89,7 @@ int MPI_Finalize()
     fn_ptr = fn_ptr + FINALIZE;
 
 #ifdef VERBOSE
-    printf("&MPI_Finalize:\t %x\n", *fn_ptr);
+    printf("UH:&MPI_Finalize:\t %p\n", *fn_ptr);
 #endif
 
     (*(fn_ptr))();
@@ -102,7 +105,7 @@ void  hello_from_LH()
     fn_ptr = fn_ptr + HELLO_LH;
 
 #ifdef VERBOSE
-    printf("&hello_from_LH:\t %x\n", *fn_ptr);
+    printf("UH:&hello_from_LH:\t %p\n", *fn_ptr);
 #endif
 
     (*(fn_ptr))();
