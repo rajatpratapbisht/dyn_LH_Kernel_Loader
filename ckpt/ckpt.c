@@ -19,10 +19,15 @@ ucontext_t context;
 static int is_in_signal_handler = 0;
 static int is_restart = 0;
 
+// this is the array of LH_mmaps START addr
+int memSpace_Arr[10] __attribute__((section(".LH_memSpace_Arr"))) = {1, 2, 3, 4, 5, 6,7 , 8, 9, 10};     //let's start by making an array of start address only!
+
+
+#define NAME_LEN 80
+
 //-----------------------------------------------------------------------------------------------------------
 // struct proc_map_line: creating a custom data type for reading /proc/self/maps file
 //-----------------------------------------------------------------------------------------------------------
-#define NAME_LEN 80
 struct proc_maps_line
 {
   void *start;
@@ -41,7 +46,7 @@ int match_one_line(int proc_maps_fd, proc_maps_line_t *proc_maps_line, char *fil
   char rwxp[4];
   char tmp[10];
   int tmp_stdin = dup(0); // Make a copy of stdin
-  dup2(proc_maps_fd, 0);  // Duplicate proc_maps_fd to stain
+  dup2(proc_maps_fd, 0);  // Duplicate proc_maps_fd to stdin
   // scanf() reads stdin (fd:0). It's a dup of proc_maps_fd ('same struct file').
   int rc = scanf("%lx-%lx %4c %*s %*s %*[0-9 ]%[^\n]\n",
                  &start, &end, rwxp, filename);
@@ -115,7 +120,7 @@ int print_proc_self_maps(proc_maps_line_t proc_maps[])
 }
 
 //-----------------------------------------------------------------------------------------------------------
-//  write_proc_self_maps: write /proc/self/maps into a file proc_self_maps.dat
+//  write_proc_self_maps: write /proc/self/maps into a file 'myckpt.dat'
 //-----------------------------------------------------------------------------------------------------------
 int write_proc_self_maps(proc_maps_line_t proc_maps[])
 {
@@ -170,6 +175,9 @@ int write_proc_self_maps(proc_maps_line_t proc_maps[])
   }
   close(fd);
 }
+
+void Return_start_Addr();
+
 
 //-----------------------------------------------------------------------------------------------------------
 // signal_handler(int signal): is our way of intercepting the interrupt signal. this case we used SIGUSR2
@@ -228,6 +236,10 @@ void signal_handler(int signal)
 
   is_in_signal_handler = 0;
 }
+
+
+
+
 
 //-----------------------------------------------------------------------------------------------------------
 // my_constructor: is our way of initialising some parameters even before 'main' routine is called. simialr to MANA's lower half being loaded

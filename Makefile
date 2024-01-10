@@ -1,15 +1,15 @@
 FILE=lower-half
 CC=gcc
 
- CFLAGS=-g3 -fPIC -O0 -rdynamic -DVERBOSE
+ #CFLAGS=-g3 -fPIC -O0 -rdynamic -DVERBOSE
  #CFLAGS=-g3 -fPIC -O0 -rdynamic -DBLOCKING
- #CFLAGS=-g3 -fPIC -O0 -rdynamic
+ CFLAGS=-g3 -fPIC -O0 -rdynamic
 
 MM=mpicc
 IFLAG=/usr/include/openmpi-x86_64/
 
 
-all: libmpiWrapperLH.so libmpiStub.so ${FILE}  upper-half hello_mpi_v1 dmtcp1 checkpoint
+all: checkpoint libmpiWrapperLH.so libmpiStub.so ${FILE}  upper-half hello_mpi_v1 dmtcp1 
 
 check_ckpt1: 
 	rm -f ckpt/myckpt.dat                #remove older checkpoint image files
@@ -30,7 +30,7 @@ check_ckpt2:
 	sleep 10
 	echo CHECKPOINTING ...
 	kill -12 `pgrep -n lower-half`               #send a SIGUSR2 to pid of counting-test
-	sleep 2
+	sleep 4
 #	echo READING...
 #      ./read_ckpt_image 
 	echo RESTARTING...

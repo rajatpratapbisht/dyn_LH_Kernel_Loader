@@ -1,7 +1,11 @@
 CC=gcc
 
-#CFLAGS=-g3 -O0 -DVERBOSE 
+ #CFLAGS=-g3 -O0 -DVERBOSE 
  CFLAGS=-g3 -O0  
+
+all: counting-test checkpoint  read_ckpt_image 
+
+#restart
 
 check: all
 	rm -f myckpt.dat		#remove older checkpoint image files
@@ -16,21 +20,17 @@ check: all
 	./restart
 
 
-
-
-all: counting-test checkpoint  read_ckpt_image restart
-
 counting-test: counting-test.c 
 	${CC} ${CFLAGS} -rdynamic -o $@ $<
 
 checkpoint: checkpoint.c libckpt.so
 	${CC} ${CFLAGS} -o $@ $<
 
-libckpt.so: ckpt.o
-	${CC} ${CFLAGS} -shared -fPIC -o $@ $<
+libckpt.so: ckpt.c
+	${CC} ${CFLAGS} -shared -fPIC -Wl,-section-start,.LH_memSpace_Arr=0x360000 -o $@ $<
 
-ckpt.o: ckpt.c
-	${CC} ${CFLAGS}  -fPIC -c $<
+#ckpt.o: ckpt.c
+#	${CC} ${CFLAGS}  -fPIC -c $<
 
 read_ckpt_image: read_ckpt_image.c
 	${CC} ${CFLAGS} -o $@ $<

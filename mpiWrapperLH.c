@@ -8,7 +8,7 @@ int mpi_init(int *argc, char ***argv)
     printf("This is lower half wrapper calling MPI_Init()\n");
 # endif
 
-    MPI_Init(&argc, &argv);
+    MPI_Init(argc, argv);
 
 # ifdef VERBOSE
     printf("LH:This is MPI_Init..\n");

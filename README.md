@@ -4,7 +4,7 @@ In this feature I have implemented a 'lower-half' capable of kernel-loading 'upp
 I have shown that 'upper-half' can call the functions declared and defined in lower half, using addresses and pointer arithmentics.
 
 # lower-half
-I have implemented the kernel-loader program (provided to me by Prof. Gene Coopermam) on my program which stores addresses of some custom functions in an array stored at a well known location in memoruy (0x5000000 in this case). This lower-half program now compiles with two necessary flags: 
+I have implemented the kernel-loader program (provided to me by Prof. Gene Coopermam) on my program which stores addresses of some custom functions in an array stored at a well known location in memory (0x5000000 in this case). This lower-half program now compiles with two necessary flags: 
 	(a) -Wl,-section-start,.custom_section=0x5000000: this section contains our array of stored function addresses.
 	(b) -Wl,-Ttext-segment=0x1000000 		: this will load our text segment of progarm in the provided address to avoid conflict when we load upper-half.
  

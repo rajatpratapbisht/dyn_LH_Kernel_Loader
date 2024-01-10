@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
 	hello_from_LH();
 	printf("-----------------------------------------\n");
 
-
+/*
   	while (count < 12) 
 	{
     		printf(" %2d ", count++);
@@ -49,7 +49,8 @@ int main(int argc, char *argv[])
   	}
 	printf("\n\n");
 	hello_from_LH();
-        printf("\n%d:Goodbye\n", rank);
+*/
+	printf("\n%d:Goodbye\n", rank);
         MPI_Finalize();
 
 return 0;
